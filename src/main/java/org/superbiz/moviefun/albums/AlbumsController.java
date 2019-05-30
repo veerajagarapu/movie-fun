@@ -7,13 +7,10 @@ import java.util.Map;
 
 @Controller
 public class AlbumsController {
-
     private final AlbumsBean albumsBean;
-
     public AlbumsController(AlbumsBean albumsBean) {
         this.albumsBean = albumsBean;
     }
-
 
     @GetMapping("/albums")
     public String index(Map<String, Object> model) {

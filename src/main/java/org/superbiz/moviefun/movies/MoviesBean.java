@@ -17,7 +17,6 @@
 package org.superbiz.moviefun.movies;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -29,29 +28,25 @@ import java.util.List;
 @Repository
 public class MoviesBean {
 
-    @PersistenceContext
+    @PersistenceContext(unitName = "movies")
     private EntityManager entityManager;
 
     public Movie find(Long id) {
         return entityManager.find(Movie.class, id);
     }
 
-    @Transactional
     public void addMovie(Movie movie) {
         entityManager.persist(movie);
     }
 
-    @Transactional
     public void editMovie(Movie movie) {
         entityManager.merge(movie);
     }
 
-    @Transactional
     public void deleteMovie(Movie movie) {
         entityManager.remove(movie);
     }
 
-    @Transactional
     public void deleteMovieId(long id) {
         Movie movie = entityManager.find(Movie.class, id);
         deleteMovie(movie);
@@ -85,13 +80,10 @@ public class MoviesBean {
         CriteriaQuery<Long> cq = qb.createQuery(Long.class);
         Root<Movie> root = cq.from(Movie.class);
         EntityType<Movie> type = entityManager.getMetamodel().entity(Movie.class);
-
         Path<String> path = root.get(type.getDeclaredSingularAttribute(field, String.class));
         Predicate condition = qb.like(path, "%" + searchTerm + "%");
-
         cq.select(qb.count(root));
         cq.where(condition);
-
         return entityManager.createQuery(cq).getSingleResult().intValue();
     }
 
@@ -100,10 +92,8 @@ public class MoviesBean {
         CriteriaQuery<Movie> cq = qb.createQuery(Movie.class);
         Root<Movie> root = cq.from(Movie.class);
         EntityType<Movie> type = entityManager.getMetamodel().entity(Movie.class);
-
         Path<String> path = root.get(type.getDeclaredSingularAttribute(field, String.class));
         Predicate condition = qb.like(path, "%" + searchTerm + "%");
-
         cq.where(condition);
         TypedQuery<Movie> q = entityManager.createQuery(cq);
         q.setMaxResults(maxResults);
