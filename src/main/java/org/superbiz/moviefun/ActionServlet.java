@@ -58,9 +58,7 @@ public class ActionServlet extends HttpServlet {
 
     private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-
         if ("Add".equals(action)) {
-
             String title = request.getParameter("title");
             String director = request.getParameter("director");
             String genre = request.getParameter("genre");
@@ -73,9 +71,7 @@ public class ActionServlet extends HttpServlet {
             });
             response.sendRedirect("moviefun");
             return;
-
         } else if ("Remove".equals(action)) {
-
             String[] ids = request.getParameterValues("id");
             new TransactionTemplate(moviesPlatformTransactionManager).execute(status -> {
                 for (String id : ids) {
@@ -88,9 +84,7 @@ public class ActionServlet extends HttpServlet {
         } else {
             String key = request.getParameter("key");
             String field = request.getParameter("field");
-
             int count = 0;
-
             if (StringUtils.isEmpty(key) || StringUtils.isEmpty(field)) {
                 count = moviesBean.countAll();
                 key = "";
@@ -98,14 +92,11 @@ public class ActionServlet extends HttpServlet {
             } else {
                 count = moviesBean.count(field, key);
             }
-
             int page = 1;
-
             try {
                 page = Integer.parseInt(request.getParameter("page"));
             } catch (Exception e) {
             }
-
             int pageCount = (count / PAGE_SIZE);
             if (pageCount == 0 || count % PAGE_SIZE != 0) {
                 pageCount++;
