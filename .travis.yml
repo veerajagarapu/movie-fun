@@ -1,3 +1,5 @@
+services:
+  - mysql
 jobs:
   include:
     - stage: database migration
@@ -12,7 +14,11 @@ jobs:
         - echo "deb https://packages.cloudfoundry.org/debian stable main" | sudo tee /etc/apt/sources.list.d/cloudfoundry-cli.list
         - sudo apt-get update
         - sudo apt-get install cf-cli
-        - cf install-plugin -r "CF-Community" mysql-plugin -f
+        - cf install-plugin https://github.com/andreasf/cf-mysql-plugin/releases/download/v2.0.0/cf-mysql-plugin-linux-amd64
         - cf login -a https://api.run.pivotal.io -u vj0044789@techmahindra.com -s sandbox -o vj0044789.techmahindra.com -p fcfm8nyk
         - curl https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/5.1.1/flyway-commandline-5.1.1-linux-x64.tar.gz | tar xvz
         - flyway-*/flyway -url="jdbc:mysql://q-n3s3y1.q-g3198.bosh:3306/service_instance_db?user=2aa095b7ca0d4ce3a26ef32fcdcdc827\u0026password=lhyu2u134r8ffi3w\u0026useSSL=false" -locations=filesystem:db -user=2aa095b7ca0d4ce3a26ef32fcdcdc827 -password=lhyu2u134r8ffi3w clean migrate
+      before_install:
+        - cf mysql -e 'USE DATABASE movies;'
+        - cf mysql -e 'CREATE TABLE album_scheduler_task (started_at TIMESTAMP NULL DEFAULT NULL);'
+        - cf mysql -e 'INSERT INTO album_scheduler_task (started_at) VALUES (NULL);'
